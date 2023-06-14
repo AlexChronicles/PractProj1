@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('favorite_movies', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->string('username')->default(NULL)->nullable();
-            $table->boolean('ban_status')->default('false');
+            //$table->timestamps();
+            $table->string('userid');
+            $table->integer('movieid');
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('favorite_movies');
     }
 };

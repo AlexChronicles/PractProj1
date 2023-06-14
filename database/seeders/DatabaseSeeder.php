@@ -22,5 +22,7 @@ class DatabaseSeeder extends Seeder
              'password' => 'asdasd'
          ]);
 
+        // \App\Models\Movie::factory(10)->create();
+
     }
 }

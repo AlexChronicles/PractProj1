@@ -43,6 +43,7 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\CheckBlock::class,
+            \App\Http\Middleware\CheckAuth::class,
         ],
     ];
 
@@ -65,5 +66,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'check.blocked' => \App\Http\Middleware\CheckBlock::class,
+        'check.auth' => \App\Http\Middleware\CheckAuth::class,
     ];
 }

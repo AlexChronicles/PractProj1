@@ -78,7 +78,6 @@ class UserCrudController extends CrudController
             'type' => 'checkbox',
         ]);
 
-
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');

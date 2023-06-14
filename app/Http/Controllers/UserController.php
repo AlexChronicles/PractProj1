@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\AuthResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 
 
-class AuthController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,9 +18,7 @@ class AuthController extends Controller
      */
     public function index()
     {
-
-
-        return AuthResource::collection(User::all());
+        return UserResource::collection(User::all());
     }
 
     /**
@@ -32,11 +30,7 @@ class AuthController extends Controller
     //Можно добавить Request Валидацию
     public function create(Request $request)
     {
-        //User::find($id)!?->fill(request()->only('name', 'username','password','email'))->save();
-
-
         $data = User::create(request()->all())->save();
-        //$data = fill(request()->all()) -> save();
         return response()->json($data,201);
     }
 
@@ -60,16 +54,7 @@ class AuthController extends Controller
 
     public function show(Request $request,$id)
     {
-
-        if (request()->hasHeader('User-Id')){
-            if (($User_Id = request()->header('User-Id')) == request('id')){
-                return new AuthResource(User::find($id));
-            }
-            return response('Uncurrent user',401);
-        }
-        return response('Something going wrong',500);
-        //return new AuthResource(User::find($id));
-        //esle return messege('Uncurrent User');
+        return new UserResource(User::find($id));
     }
 
     /**
@@ -94,23 +79,9 @@ class AuthController extends Controller
     //Можно добавить Request Валидацию
     public function update(Request $request, $id)
     {
-        /*$name = $request->input('name');
-        $username = $request->input('username');
-
-        User::find($id) ?-> fill(
-            'name' => request('name'),
-            'username' => request('username'),
-        );*/
-        if (request()->hasHeader('User-Id')){
-            if (($User_Id = request()->header('User-Id')) == request('id')){
-                User::find($id)?->fill(request()->only('name', 'username'))->save();
-                return response()->json([
-                'data' => new AuthResource(User::find($id))
-                ], 200);
-            }
-            return response('Uncurrent user',401);
-        }
-        return response('Something going wrong',500);
+        $user = User::find($id);
+        $user?->fill(request()->only('name', 'username'))->save();
+        return response()->json(['data' => new UserResource($user)], 200);
     }
 
     /**
@@ -121,13 +92,11 @@ class AuthController extends Controller
      */
     public function destroy($id)
     {
-        if (request()->hasHeader('User-Id')){
-            if (($User_Id = request()->header('User-Id')) == request('id')){
-                User::find($id)->delete();
-                return response()->json('Succes',204);
-                }
-            return response('Uncurrent user',401);
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json('Not found', 404);
         }
-        return response('Something going wrong',500);
+        $user->delete();
+        return response()->json('Succes',204);
     }
 }
