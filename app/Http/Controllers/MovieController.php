@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Models\Movie;
@@ -19,8 +20,7 @@ class MovieController extends Controller
     public function index()
     {
         $movies = Movie::paginate(10);
-        return response()->json($movies);
-        //return MovieResource::collection($movies);
+        return response()->json($movies, 200);
     }
 
     /**
@@ -37,19 +37,20 @@ class MovieController extends Controller
     public function favorite(Request $request, $id){
         $userid = request('user');
         $movieid = request('movie_id');
-        if (!(FavoriteMovie::where('userid', $userid)->where('movieid', $movieid)->exists())){
-            $data = FavoriteMovie::create([
-                'userid' => request('usid'),
-                'movieid' => request('movie_id')
-            ]);
-            return response()->json($data,201);
-        }
-        return response('Record exists',500);
+        if ((FavoriteMovie::where('userid', $userid)->where('movieid', $movieid)->exists()))
+            return response('Record exists',500);
+        $data = FavoriteMovie::create([
+            'userid' => $userid,
+            'movieid' => $movieid
+        ]);
+        return response()->json($data,201);
     }
 
     public function delfavorite(Request $request, $id){
         $userid = request('user');
         $movieid = request('movie_id');
+        if (!(FavoriteMovie::where('userid', $userid)->where('movieid', $movieid)->exists()))
+            return response('Record is not exist',500);
         FavoriteMovie::where('userid', $userid)->where('movieid', $movieid)->delete();
         return response()->json('Succes',204);
     }
@@ -60,14 +61,23 @@ class MovieController extends Controller
         switch($loaderType){
             case 'sql':
                 $movies = $this->getMoviesWithSql();
-                break;
-            return response()->json($movies);
+                return response()->json($movies);
+            case 'inMemory':
+                $movies = $this->getMoviesInMemory();
+                return response()->json($movies);
+            return response()->json('{“error”: “INTERNAL_ERROR”}', 500);
         }
     }
 
     private function getMoviesWithSql(){
+        $userid = request('user');
+        $movies = DB::select(DB::raw("Select * From movies where id not in (Select movieid From favorite_movies Where userid = '$userid')"));
+        return $movies;
+    }
+
+    private function getMoviesInMemory(){
+        $userid = request('user');
         $movies = Movie::whereNotIn('id', function ($query) use ($userid) {
-            dd($userid);
             $query->select('movieid')
                 ->from('favorite_movies')
                 ->where('userid', $userid);
