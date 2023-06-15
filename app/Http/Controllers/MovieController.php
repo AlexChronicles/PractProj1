@@ -65,7 +65,7 @@ class MovieController extends Controller
             case 'inMemory':
                 $movies = $this->getMoviesInMemory();
                 return response()->json($movies);
-            return response()->json('{“error”: “INTERNAL_ERROR”}', 500);
+            return response()->json(['error' => 'INTERNAL_ERROR'], 500);
         }
     }
 
