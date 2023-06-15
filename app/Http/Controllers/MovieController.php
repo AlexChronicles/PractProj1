@@ -46,7 +46,7 @@ class MovieController extends Controller
         return response()->json($data,201);
     }
 
-    public function delfavorite(Request $request, $id){
+    public function delFavorite(Request $request, $id){
         $userid = request('user');
         $movieid = request('movie_id');
         if (!(FavoriteMovie::where('userid', $userid)->where('movieid', $movieid)->exists()))
@@ -55,7 +55,7 @@ class MovieController extends Controller
         return response()->json('Succes',204);
     }
 
-    public function indexunfavorite(Request $request, $id){
+    public function indexUnFavorite(Request $request, $id){
         $loaderType = request()->header('LoaderType');
 
         switch($loaderType){
