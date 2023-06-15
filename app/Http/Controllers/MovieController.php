@@ -37,11 +37,11 @@ class MovieController extends Controller
     public function favorite(Request $request, $id){
         $userid = request('user');
         $movieid = request('movie_id');
-        if ((FavoriteMovie::where('userid', $userid)->where('movieid', $movieid)->exists()))
+        if ((FavoriteMovie::where('user_id', $userid)->where('movie_id', $movieid)->exists()))
             return response('Record exists',500);
         $data = FavoriteMovie::create([
-            'userid' => $userid,
-            'movieid' => $movieid
+            'user_id' => $userid,
+            'movie_id' => $movieid
         ]);
         return response()->json($data,201);
     }
@@ -51,7 +51,7 @@ class MovieController extends Controller
         $movieid = request('movie_id');
         if (!(FavoriteMovie::where('userid', $userid)->where('movieid', $movieid)->exists()))
             return response('Record is not exist',500);
-        FavoriteMovie::where('userid', $userid)->where('movieid', $movieid)->delete();
+        FavoriteMovie::where('user_id', $userid)->where('movie_id', $movieid)->delete();
         return response()->json('Succes',204);
     }
 
@@ -71,16 +71,16 @@ class MovieController extends Controller
 
     private function getMoviesWithSql(){
         $userid = request('user');
-        $movies = DB::select(DB::raw("Select * From movies where id not in (Select movieid From favorite_movies Where userid = '$userid')"));
+        $movies = DB::select(DB::raw("Select * From movies where id not in (Select movie_id From favorite_movies Where user_id = '$userid')"));
         return $movies;
     }
 
     private function getMoviesInMemory(){
         $userid = request('user');
         $movies = Movie::whereNotIn('id', function ($query) use ($userid) {
-            $query->select('movieid')
+            $query->select('movie_id')
                 ->from('favorite_movies')
-                ->where('userid', $userid);
+                ->where('user_id', $userid);
             })->get();
         return $movies;
     }

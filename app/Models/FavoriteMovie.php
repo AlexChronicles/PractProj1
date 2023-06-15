@@ -12,7 +12,7 @@ class FavoriteMovie extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'userid',
-        'movieid',
+        'user_id',
+        'movie_id',
     ];
 }
