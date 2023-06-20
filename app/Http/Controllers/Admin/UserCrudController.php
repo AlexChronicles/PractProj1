@@ -6,6 +6,8 @@ use App\Http\Requests\UserRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
+
+
 /**
  * Class UserCrudController
  * @package App\Http\Controllers\Admin
@@ -19,7 +21,7 @@ class UserCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     //use \App\Http\Controllers\Admin\Operations\BanOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ReorderOperation;
+
 
 
 
@@ -54,6 +56,39 @@ class UserCrudController extends CrudController
         CRUD::column('name');
         CRUD::column('email');
         CRUD::column('ban_status');
+        $this->crud->addColumns([
+            [ // n-n relationship (with pivot table)
+                'label'     => trans('backpack::permissionmanager.roles'), // Table column heading
+                'type'      => 'select_multiple',
+                'name'      => 'roles', // the method that defines the relationship in your Model
+                'entity'    => 'roles', // the method that defines the relationship in your Model
+                'attribute' => 'name', // foreign key attribute that is shown to user
+                'model'     => config('permission.models.role'), // foreign key model
+            ],
+        ]);
+
+        if (backpack_pro()) {
+            // Role Filter
+            $this->crud->addFilter(
+                [
+                    'name'  => 'role',
+                    'type'  => 'dropdown',
+                    'label' => trans('backpack::permissionmanager.role'),
+                ],
+                config('permission.models.role')::all()->pluck('name', 'id')->toArray(),
+                function ($value) { // if the filter is active
+                    $this->crud->addClause('whereHas', 'roles', function ($query) use ($value) {
+                        $query->where('role_id', '=', $value);
+                    });
+                }
+            );
+    }
+        /*
+        CRUD::column('id');
+        CRUD::column('name');
+        CRUD::column('email');
+        CRUD::column('ban_status');
+        */
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
@@ -69,8 +104,15 @@ class UserCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
+        CRUD::field('id');
+        CRUD::field('name');
+        CRUD::field('email');
+        CRUD::field('username');
+
+        $this->addUserFields();
         $this->crud->setValidation(UserRequest::class);
 
+        /*
         CRUD::field('id');
         CRUD::field('name');
         CRUD::field('email');
@@ -80,12 +122,14 @@ class UserCrudController extends CrudController
             'label' => 'Заблокирован',
             'type' => 'checkbox',
         ]);
+        */
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
          * - CRUD::field('price')->type('number');
          * - CRUD::addField(['name' => 'price', 'type' => 'number'])); 
          */
+
     }
 
     /**
@@ -102,5 +146,38 @@ class UserCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
+    protected function addUserFields()
+    {
+        $this->crud->addFields([
+            [
+                // two interconnected entities
+                'label'             => trans('backpack::permissionmanager.user_role_permission'),
+                'field_unique_name' => 'user_role_permission',
+                'type'              => 'checklist_dependency',
+                'name'              => ['roles', 'permissions'],
+                'subfields'         => [
+                    'primary' => [
+                        'label'            => trans('backpack::permissionmanager.roles'),
+                        'name'             => 'roles', // the method that defines the relationship in your Model
+                        'entity'           => 'roles', // the method that defines the relationship in your Model
+                        'entity_secondary' => 'permissions', // the method that defines the relationship in your Model
+                        'attribute'        => 'name', // foreign key attribute that is shown to user
+                        'model'            => config('permission.models.role'), // foreign key model
+                        'pivot'            => true, // on create&update, do you need to add/delete pivot table entries?]
+                        'number_columns'   => 3, //can be 1,2,3,4,6
+                    ],
+                    'secondary' => [
+                        'label'          => mb_ucfirst(trans('backpack::permissionmanager.permission_plural')),
+                        'name'           => 'permissions', // the method that defines the relationship in your Model
+                        'entity'         => 'permissions', // the method that defines the relationship in your Model
+                        'entity_primary' => 'roles', // the method that defines the relationship in your Model
+                        'attribute'      => 'name', // foreign key attribute that is shown to user
+                        'model'          => config('permission.models.permission'), // foreign key model
+                        'pivot'          => true, // on create&update, do you need to add/delete pivot table entries?]
+                        'number_columns' => 3, //can be 1,2,3,4,6
+                    ],
+                ],
+            ],
+        ]);
+    }
 }
