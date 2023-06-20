@@ -22,6 +22,8 @@ class UserCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ReorderOperation;
 
 
+
+
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
      * 
@@ -33,6 +35,9 @@ class UserCrudController extends CrudController
         CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
         CRUD::setEntityNameStrings('user', 'Table');
 
+        if (backpack_auth()->user()->hasRole('moderator')) {
+            CRUD::denyAccess(['create', 'delete', 'update']);
+        }
     }
 
     /**
@@ -48,8 +53,6 @@ class UserCrudController extends CrudController
         CRUD::column('id');
         CRUD::column('name');
         CRUD::column('email');
-        CRUD::column('password');
-        CRUD::column('username');
         CRUD::column('ban_status');
         /**
          * Columns can be defined using the fluent syntax or array syntax:

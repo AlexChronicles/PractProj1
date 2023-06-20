@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
     {
          \App\Models\User::factory(10)->create();
 
-         \App\Models\User::factory()->create([
+        /* \App\Models\User::factory()->create([
              'name' => 'asd',
              'email' => 'asd@asd.com',
              'password' => 'asdasd'
-         ]);
+         ]);*/
 
         // \App\Models\Movie::factory(10)->create();
 
