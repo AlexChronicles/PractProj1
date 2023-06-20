@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('username')->default(NULL)->nullable();
             $table->boolean('ban_status')->default('false');
+            $table->rememberToken();
         });
     }
 

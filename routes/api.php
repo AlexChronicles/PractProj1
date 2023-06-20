@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -35,3 +37,9 @@ Route::get('movies',[MovieController::class, 'index'])->name('movies.index');
 Route::post('movies/{user}/{movie_id}',[MovieController::class, 'favorite'])->name('movies.favorite');
 Route::delete('movies/{user}/{movie_id}',[MovieController::class, 'delfavorite'])->name('movies.delfavorite');
 Route::get('movies/{user}',[MovieController::class, 'indexunfavorite'])->name('movies.indexunfavorite');
+
+// Ex3
+
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/logout', [AuthController::class, 'logout']);

@@ -22,10 +22,6 @@ class UserCrudController extends CrudController
     use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
     //use \App\Http\Controllers\Admin\Operations\BanOperation;
 
-
-
-
-
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
      * 
@@ -37,7 +33,7 @@ class UserCrudController extends CrudController
         CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
         CRUD::setEntityNameStrings('user', 'Table');
 
-        if (backpack_auth()->user()->hasRole('moderator')) {
+        if ((backpack_auth()->user()->hasRole('moderator')) || (backpack_auth()->user()->hasPermissionTo('view'))) {
             CRUD::denyAccess(['create', 'delete', 'update']);
         }
     }
@@ -83,12 +79,6 @@ class UserCrudController extends CrudController
                 }
             );
     }
-        /*
-        CRUD::column('id');
-        CRUD::column('name');
-        CRUD::column('email');
-        CRUD::column('ban_status');
-        */
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
@@ -116,18 +106,6 @@ class UserCrudController extends CrudController
 
         $this->addUserFields();
         $this->crud->setValidation(UserRequest::class);
-
-        /*
-        CRUD::field('id');
-        CRUD::field('name');
-        CRUD::field('email');
-        CRUD::field('username');
-        $this->crud->addField([
-            'name' => 'ban_status',
-            'label' => 'Заблокирован',
-            'type' => 'checkbox',
-        ]);
-        */
 
         /**
          * Fields can be defined using the fluent syntax or array syntax:
