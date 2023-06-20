@@ -54,7 +54,10 @@ class UserController extends Controller
 
     public function show(Request $request,$id)
     {
-        return new UserResource(User::find($id));
+        $user = User::find($id);
+        if ($user)
+            return new UserResource($user);
+        return response()->json('Uncurrent user',422);
     }
 
     /**
@@ -79,6 +82,8 @@ class UserController extends Controller
     //Можно добавить Request Валидацию
     public function update(Request $request, $id)
     {
+        if (!$id !== auth('sanctum')->user()->id)
+            return response()->json('Uncurrent user',422);
         $user = User::find($id);
         $user?->fill(request()->only('name', 'username'))->save();
         return response()->json(['data' => new UserResource($user)], 200);
@@ -92,6 +97,8 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        if ($id !== auth('sanctum')->user()->id)
+            return response()->json('Uncurrent user',422);
         $user = User::find($id);
         if (!$user) {
             return response()->json('Not found', 404);

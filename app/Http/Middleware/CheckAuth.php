@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CheckAuth
 {
@@ -16,10 +17,14 @@ class CheckAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        $usid = request('user');
+        /*$usid = request('user');
         if (($User_Id = request()->header('User-Id')) == $usid){
             return $next($request);
         }
-        return response('Uncurrent user',401);
+        return response('Uncurrent user',401);*/
+
+
+        //if (auth('sanctum')->user())
+        return $next($request);
     }
 }

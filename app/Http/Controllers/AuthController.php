@@ -73,7 +73,6 @@ class AuthController extends Controller
     {
         //$user = User::where('email', $request->email)->first();
         $user = auth('sanctum')->user();
-
         $user->tokens()->delete();
 
         return response()->json(['message' => 'Logged out']);
