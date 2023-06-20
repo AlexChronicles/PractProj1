@@ -108,6 +108,11 @@ class UserCrudController extends CrudController
         CRUD::field('name');
         CRUD::field('email');
         CRUD::field('username');
+        $this->crud->addField([
+            'name' => 'ban_status',
+            'label' => 'Заблокирован',
+            'type' => 'checkbox',
+        ]);
 
         $this->addUserFields();
         $this->crud->setValidation(UserRequest::class);
