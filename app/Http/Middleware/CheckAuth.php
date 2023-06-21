@@ -19,11 +19,11 @@ class CheckAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        //$usid = $request->route('id');
-        dd($request->route('user'));
-        if ($usid == auth('sanctum')->user()->id){
+        $usid = $user;
+        dd($usid);
+        if ($usid == auth('sanctum')->user()->id)
             return $next($request);
         return response('Uncurrent user',401);
-        }
+        //return $next($request);
     }
 }

@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('username')->default(NULL)->nullable();
-            $table->boolean('ban_status')->default('false');
+            $table->string('username')->nullable();
+            $table->boolean('ban_status')->default(false);
             $table->rememberToken();
         });
     }

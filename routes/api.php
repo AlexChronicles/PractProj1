@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('check.auth')->put('/users/{user}',[UserController::class, 'update'])->name('users.update');
 Route::middleware('check.auth')->delete('/users/{user}',[UserController::class, 'destroy'])->name('users.destroy');
-//Route::apiResource('users',UserController::class);
+Route::apiResource('users',UserController::class);
 
 /*
 Route::get('users', [UserController::class, 'index'])->name('users.index');
