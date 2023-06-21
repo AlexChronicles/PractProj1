@@ -29,23 +29,6 @@ class UserRequest extends FormRequest
             'username' => 'required|regex:/^[a-zA-Z ]+$/u|max:255'
             ];
 
-
-        /*switch ($this->getMethod()){
-           case 'PUT':
-               return [
-                'email' => 'required|email|unique:users,email',
-                'name' => 'required|regex:/^[a-zA-Z]+$/u|max:255|unique:users,name',
-                'username' => 'required|regex:/^[a-zA-Z]+$/u|max:255|unique:users,username',
-                'isActive' => 'required|boolean',
-                ];
-            case 'DELETE':
-                return [
-                    'email' => 'required|email|exist:email'
-                    'name' => 'required|email|exist:email'*/
-                    //if ('email' => 'exists:email')
-                        //DB::table('users')->delete('email');
-                //];
-        //}
     }
 
 }

@@ -23,6 +23,5 @@ class CheckAuth
         if ($usid == auth('sanctum')->user()->id)
             return $next($request);
         return response('Uncurrent user',401);
-        //return $next($request);
     }
 }
