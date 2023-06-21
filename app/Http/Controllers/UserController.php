@@ -17,13 +17,6 @@ class UserController extends Controller
         return UserResource::collection(User::all());
     }
 
-    //Можно добавить Request Валидацию
-    public function create(Request $request)
-    {
-        $data = User::create(request()->all())->save();
-        return response()->json($data,201);
-    }
-
     public function show(Request $request,$id)
     {
         $user = User::find($id);

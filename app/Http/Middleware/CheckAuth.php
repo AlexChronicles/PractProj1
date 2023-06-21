@@ -19,8 +19,7 @@ class CheckAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        $usid = $user;
-        dd($usid);
+        $usid = Route::current()->parameter('user');
         if ($usid == auth('sanctum')->user()->id)
             return $next($request);
         return response('Uncurrent user',401);

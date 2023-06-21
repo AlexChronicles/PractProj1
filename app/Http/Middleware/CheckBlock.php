@@ -19,7 +19,7 @@ class CheckBlock
     public function handle(Request $request, Closure $next)
     {
 
-        $userId = $request->header('User-Id');
+        $userId = auth('sanctum')->user()->id;
         $user = User::find($userId);
 
         if ($user && $user->ban_status) {

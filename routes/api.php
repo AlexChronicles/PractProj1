@@ -17,31 +17,26 @@ use App\Http\Controllers\AuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::middleware(['check.auth','check.blocked'])->group(function(){
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    Route::controller(UserController::class)->group(function(){
+        Route::put('/users/{user}', 'update')->name('users.update');
+        Route::delete('/users/{user}', 'destroy')->name('users.destroy');
+    });
+
+    // Ex2
+    Route::controller(MovieController::class)->group(function(){
+        Route::get('movies', 'index')->name('movies.index');
+        Route::post('movies/{user}/{movie_id}', 'favorite')->name('movies.favorite');
+        Route::delete('movies/{user}/{movie_id}', 'delfavorite')->name('movies.delfavorite');
+        Route::get('movies/{user}', 'indexunfavorite')->name('movies.indexunfavorite');
+    });
 });
 
-Route::middleware('check.auth')->put('/users/{user}',[UserController::class, 'update'])->name('users.update');
-Route::middleware('check.auth')->delete('/users/{user}',[UserController::class, 'destroy'])->name('users.destroy');
-Route::apiResource('users',UserController::class);
-
-/*
-Route::get('users', [UserController::class, 'index'])->name('users.index');
-Route::middleware('check.auth')->get('users/{usid}', [UserController::class, 'show'])->name('users.show');
-Route::middleware('check.auth')->put('users/{usid}', [UserController::class, 'update'])->name('users.update');
-Route::middleware('check.auth')->delete('users/{usid}', [UserController::class, 'destroy'])->name('users.destroy');
-Route::middleware('check.auth')->post('users', [UserController::class, 'create'])->name('users.create');
-*/
-
-// Ex2
-Route::get('movies',[MovieController::class, 'index'])->name('movies.index');
-Route::post('movies/{user}/{movie_id}',[MovieController::class, 'favorite'])->name('movies.favorite');
-Route::delete('movies/{user}/{movie_id}',[MovieController::class, 'delfavorite'])->name('movies.delfavorite');
-Route::get('movies/{user}',[MovieController::class, 'indexunfavorite'])->name('movies.indexunfavorite');
+Route::middleware('check.blocked')->get('users', [UserController::class,'index'])->name('users.index');
+Route::middleware('check.blocked')->get('users/{user}',[UserController::class,'show'])->name('users.show');
 
 // Ex3
-
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/logout', [AuthController::class, 'logout']);
