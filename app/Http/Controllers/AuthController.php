@@ -71,7 +71,6 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        //$user = User::where('email', $request->email)->first();
         $user = auth('sanctum')->user();
         $user->tokens()->delete();
 
