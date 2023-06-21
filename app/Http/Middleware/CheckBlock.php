@@ -22,7 +22,6 @@ class CheckBlock
         $userId = $request->header('User-Id');
         $user = User::find($userId);
 
-
         if ($user && $user->ban_status) {
             return response()->json(['error' => 'User is blocked'], 403);
         }

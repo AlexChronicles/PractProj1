@@ -5,6 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Models\User;
 
 class CheckAuth
 {
@@ -17,14 +19,11 @@ class CheckAuth
      */
     public function handle(Request $request, Closure $next)
     {
-        /*$usid = request('user');
-        if (($User_Id = request()->header('User-Id')) == $usid){
+        //$usid = $request->route('id');
+        dd($request->route('user'));
+        if ($usid == auth('sanctum')->user()->id){
             return $next($request);
+        return response('Uncurrent user',401);
         }
-        return response('Uncurrent user',401);*/
-
-
-        //if (auth('sanctum')->user())
-        return $next($request);
     }
 }
